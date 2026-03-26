@@ -4,6 +4,9 @@ on:
   push:
     branches: ["main"]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,16 +24,16 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: yourdockerhubuser/yourapp:${{ github.sha }}
+          tags: 17riya/yourapp:${{ github.sha }}
 
       - name: Update Deployment Image
         run: |
-          sed -i "s|image: .*|image: yourdockerhubuser/yourapp:${{ github.sha }}|" k8s/deployment.yaml
+          sed -i "s|image: .*|image: 17riya/yourapp:${{ github.sha }}|" k8s/deployment.yaml
 
       - name: Commit Changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add k8s/deployment.yaml
-          git commit -m "Update image tag"
+          git commit -m "Update image tag" || echo "No changes to commit"
           git push
